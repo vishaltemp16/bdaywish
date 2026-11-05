@@ -66,5 +66,9 @@ window.BIRTHDAY = {
       from: "Eshika",
       text: "Many happy returns, May your day be full of main character energy, zero faltu drama, and endless sukoon. Keep slaying, keep serving looks, and never let anyone dim your glow......",
     },
+    {
+      from: "Disha",
+      text: "Happiest bday Vishakha!! know we haven't been talking regularly lately since we both have our own things going on, and ik u have ur tests going on too, but I really hope u take a day off for urself and enjoy ur bday with ur loved ones. Unfortunately I won't be there for ur bday even tho u came all the way to Airoli for mine, but I genuinely wish the best things to happen to u in the future bcs u truly deserve it. And even tho we don't talk regularly, just know that I'm always there if u ever wanna vent, talk about anything or just need someone to listen",
+    },
   ],
 };
