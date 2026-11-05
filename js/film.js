@@ -13,6 +13,9 @@ export function createFilm(frame, config = {}, { onPlay, onPause } = {}) {
   const empty = frame.querySelector(".film-empty");
   const toggle = frame.querySelector("[data-film-toggle]");
   const sound = frame.querySelector("[data-film-sound]");
+  const muteButton = frame.querySelector("[data-film-mute]");
+  const fullButton = frame.querySelector("[data-film-full]");
+  const controls = frame.querySelector(".film-controls");
   const bar = frame.querySelector(".film-bar span");
   const ambient = frame.querySelector(".film-ambient");
   const paint = ambient.getContext("2d", { willReadFrequently: false });
@@ -22,6 +25,7 @@ export function createFilm(frame, config = {}, { onPlay, onPause } = {}) {
   let missing = false;
   let inView = false;
   let userPaused = false;
+  let userMuted = false;
   let priming = false;
   let glowFrame = 0;
 
@@ -29,6 +33,7 @@ export function createFilm(frame, config = {}, { onPlay, onPause } = {}) {
   if (id) {
     video.remove();
     toggle.remove();
+    controls.remove();
     frame.querySelector(".film-bar").remove();
     let started = false;
     watchVisible(frame, (on) => {
@@ -50,6 +55,7 @@ export function createFilm(frame, config = {}, { onPlay, onPause } = {}) {
     missing = true;
     empty.hidden = false;
     toggle.hidden = true;
+    controls.hidden = true;
     video.removeAttribute("src");
   }
 
@@ -86,7 +92,7 @@ export function createFilm(frame, config = {}, { onPlay, onPause } = {}) {
 
   async function play() {
     if (missing) return;
-    video.muted = !unlocked;
+    video.muted = userMuted || !unlocked;
     try {
       await video.play();
     } catch {
@@ -108,33 +114,106 @@ export function createFilm(frame, config = {}, { onPlay, onPause } = {}) {
   });
   video.addEventListener("pause", () => {
     if (priming) return;
-    frame.classList.remove("is-playing");
+    frame.classList.remove("is-playing", "is-idle");
     onPause?.();
   });
   video.addEventListener("ended", () => {
     bar.style.transform = "scaleX(1)";
     userPaused = true;
   });
+  function resume() {
+    userPaused = false;
+    if (video.ended) video.currentTime = 0;
+    if (!userMuted) video.muted = false;
+    sound.hidden = !video.muted;
+    video.play();
+  }
+
+  // Controls fade out while the film plays and nobody touches it. On a touch
+  // screen, the first tap on a faded film only brings them back.
+  let idleTimer = 0;
+  let lastPointer = "mouse";
+  function wake() {
+    frame.classList.remove("is-idle");
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+      if (!video.paused) frame.classList.add("is-idle");
+    }, 2600);
+  }
+  screen.addEventListener("pointermove", (event) => event.pointerType === "mouse" && wake());
+  screen.addEventListener("pointerdown", (event) => (lastPointer = event.pointerType), true);
+
   toggle.addEventListener("click", () => {
     unlocked = true;
-    if (video.paused) {
-      userPaused = false;
-      if (video.ended) video.currentTime = 0;
-      video.muted = false;
-      sound.hidden = true;
-      video.play();
-    } else {
+    if (lastPointer !== "mouse" && frame.classList.contains("is-idle")) return wake();
+    wake();
+    if (video.paused) resume();
+    else {
       userPaused = true;
       video.pause();
     }
   });
   sound.addEventListener("click", () => {
     unlocked = true;
+    userMuted = false;
     video.muted = false;
     sound.hidden = true;
-    onPlay?.(false);
   });
+  muteButton.addEventListener("click", () => {
+    unlocked = true;
+    userMuted = !video.muted;
+    video.muted = userMuted;
+    sound.hidden = true;
+    wake();
+  });
+  video.addEventListener("volumechange", () => {
+    muteButton.setAttribute("aria-pressed", String(video.muted));
+    muteButton.setAttribute("aria-label", video.muted ? "Unmute" : "Mute");
+    if (!video.paused && !priming) onPlay?.(video.muted);
+  });
+
+  // Full screen. Phones that allow it are turned sideways for the landscape film;
+  // an iPhone has no element full screen, so it gets Safari's own video player.
+  const fullElement = () => document.fullscreenElement || document.webkitFullscreenElement;
+  const inFull = () => Boolean(fullElement() || video.webkitDisplayingFullscreen);
+  async function enterFull() {
+    if (video.paused) resume();
+    const request = screen.requestFullscreen || screen.webkitRequestFullscreen;
+    if (!request) return video.webkitEnterFullscreen?.();
+    try {
+      await request.call(screen, { navigationUI: "hide" });
+    } catch {
+      return video.webkitEnterFullscreen?.();
+    }
+    if (video.videoWidth >= video.videoHeight) {
+      try {
+        await window.screen.orientation?.lock?.("landscape");
+      } catch {}
+    }
+  }
+  fullButton.addEventListener("click", () => {
+    unlocked = true;
+    wake();
+    if (fullElement()) (document.exitFullscreen || document.webkitExitFullscreen)?.call(document);
+    else enterFull();
+  });
+  const onFullChange = () => {
+    const full = Boolean(fullElement());
+    frame.classList.toggle("is-full", full);
+    fullButton.setAttribute("aria-label", full ? "Exit full screen" : "Full screen");
+    if (!full) {
+      try {
+        window.screen.orientation?.unlock?.();
+      } catch {}
+    }
+    wake();
+  };
+  document.addEventListener("fullscreenchange", onFullChange);
+  document.addEventListener("webkitfullscreenchange", onFullChange);
+
   watchVisible(frame, (on) => {
+    // Going full screen lifts the film out of the page, which looks like scrolling away.
+    if (inFull()) return;
     inView = on;
     if (on && !userPaused) play();
     else if (!on) video.pause();

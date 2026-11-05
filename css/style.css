@@ -394,8 +394,39 @@ a { color: inherit; }
 .film-frame.is-playing .film-toggle::after { opacity: 0; transform: scale(0.8); }
 .film-sound { position: absolute; z-index: 2; right: 14px; top: 14px; padding: 9px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(13, 10, 8, 0.65); backdrop-filter: blur(8px); font: 500 11px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; }
 .film-sound[hidden] { display: none; }
-.film-bar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; height: 3px; background: rgba(255, 255, 255, 0.08); }
+.film-bar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; height: 3px; background: rgba(255, 255, 255, 0.08); transition: opacity 0.5s; }
 .film-bar span { display: block; height: 100%; background: var(--amber); transform-origin: 0 50%; transform: scaleX(0); }
+.film-controls { position: absolute; right: 12px; bottom: 14px; z-index: 3; display: flex; gap: 8px; transition: opacity 0.5s; }
+.film-btn {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: rgba(13, 10, 8, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--ink);
+  transition: border-color 0.3s, background 0.3s, transform 0.3s var(--ease);
+}
+.film-btn:hover { border-color: var(--amber); background: rgba(13, 10, 8, 0.8); }
+.film-btn:active { transform: scale(0.92); }
+.film-btn:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.film-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.film-btn .ico-off { display: none; }
+.film-btn[aria-pressed="true"] .ico-on,
+.film-frame.is-full [data-film-full] .ico-on { display: none; }
+.film-btn[aria-pressed="true"] .ico-off,
+.film-frame.is-full [data-film-full] .ico-off { display: inline; }
+.film-btn[aria-pressed="true"] { color: var(--amber); }
+.film-frame.is-idle .film-controls,
+.film-frame.is-idle .film-bar { opacity: 0; }
+.film-frame.is-idle .film-screen { cursor: none; }
+.film-screen:fullscreen { width: 100%; height: 100%; max-height: none; aspect-ratio: auto; border-radius: 0; box-shadow: none; background: #000; }
+.film-screen:-webkit-full-screen { width: 100%; height: 100%; max-height: none; aspect-ratio: auto; border-radius: 0; box-shadow: none; background: #000; }
+.film-screen:fullscreen .film-controls { right: max(20px, env(safe-area-inset-right)); bottom: max(22px, env(safe-area-inset-bottom)); }
 
 /* ---------------------------------------------------------------- Notes */
 .notes-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 22px; align-items: start; }
