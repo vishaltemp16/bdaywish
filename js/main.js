@@ -21,7 +21,8 @@ $("[data-from]").textContent = CFG.from || "your friends";
 
 const letter = $("[data-letter]");
 const words = [];
-(CFG.letter || "").split(/\n\s*\n/).forEach((paragraph) => {
+const paragraphs = Array.isArray(CFG.letter) ? CFG.letter : (CFG.letter || "").split(/\n\s*\n/);
+paragraphs.filter((paragraph) => paragraph.trim()).forEach((paragraph) => {
   const p = document.createElement("p");
   paragraph.trim().split(/\s+/).forEach((word, index) => {
     const span = document.createElement("span");
@@ -33,6 +34,9 @@ const words = [];
   });
   letter.append(p);
 });
+const signature = $("[data-letter-from]");
+signature.textContent = CFG.letterFrom || "";
+signature.hidden = !CFG.letterFrom;
 
 const notes = $("[data-notes]");
 (CFG.messages || []).forEach((message, index) => {

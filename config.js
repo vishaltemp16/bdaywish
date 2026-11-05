@@ -2,7 +2,7 @@
 // After changing `candles`, run `npm run build` so the cake gets the right number.
 window.BIRTHDAY = {
   // The birthday person's name, as it should appear on the loader, hero, cake topper and finale.
-  name: "Friend",
+  name: "Vishakha",
 
   // Shown under the name in the hero. Leave "" to hide.
   date: "",
@@ -37,15 +37,26 @@ window.BIRTHDAY = {
   // Optional background music (mp3 in assets/), starts when the gift is opened. "" for none.
   music: "",
 
-  // The letter shown before the notes. Use \n\n for a new paragraph.
-  letter:
-    "Another year of you, and somehow you keep getting better at it.\n\nWe put this together because a text felt too small. Scroll slowly, make a wish, and know that you are loved a ridiculous amount.",
+  // The letter, one paragraph per line, and who signed it.
+  letter: [
+    "Happy Birthday love.",
+    "Looks like another year has passed and new chapter has begun in your life novel. Twenteess.",
+    "First of all. Kya pretty hai yarr behen tuu. And koi (tu khud) kuch bhi bole i always look at you and think, how effortlessly beautiful you are.",
+    "And pairing that with your intellectual, willing to understand anndd take in everyone's perspective is just what makes you thee bestt core freind i could ever get.",
+    "And second, i know things have been very hard for your past nineteenth self.. even eighteenth and maybe even seventeen year old self. That girl has went through a lot, been through the difficult negative phases... And you're still trying to heal byy picking up all the positive pieces and good sides of every coin. Irrespective of the progress, I'm proud of you... I'm so so so proud of you and grateful that some of those struggling times you chose to talk to me... To put your trust in me for being vulnerable.",
+    "You might not know how much that big step of trust meant to me... And in last.... you really mean so much to me, And I'll always be there for you. Happy birthday again, Vishakha...",
+  ],
+  letterFrom: "~Manisha xo",
 
-  // Notes from friends. Add as many as you like.
+  // Notes from friends. Add as many as you like. \n starts a new line.
   messages: [
-    { from: "Friend 1", text: "Happy birthday! Thank you for being the person who always shows up." },
-    { from: "Friend 2", text: "May this year be as fun as our worst ideas and as calm as our best naps." },
-    { from: "Friend 3", text: "Here's to more late nights, more road trips and more stories we can't tell anyone." },
-    { from: "Friend 4", text: "You make every room warmer. Have the best day." },
+    {
+      from: "Sneha Kumari",
+      text: "On your special day, I pray that life treats you gently... May you get paisa, gaadi, mehenga ghar May your jawaani stays deewani May your sham stays mastani May your zindagi be badi May you do bade bade shehar me, choti choti baatein...",
+    },
+    {
+      from: "Sneha Paul",
+      text: "Happiest Birthday Vishuuuuuuuu<3\nMay u get all the happiness and love in the world!!\nMay u get to eat Momos and Rasmalais more often..\nLove u to the moon and back.",
+    },
   ],
 };

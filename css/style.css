@@ -247,9 +247,10 @@ a { color: inherit; }
 /* ---------------------------------------------------------------- Letter */
 .letter-body { max-width: 900px; margin: 0 auto; }
 .letter-dear { margin: 0 0 0.6em; font: italic 300 clamp(30px, 4.6vw, 56px)/1.1 var(--serif); color: var(--amber); }
-.letter-text p { margin: 0 0 1em; font: 300 clamp(24px, 3.4vw, 42px)/1.3 var(--serif); letter-spacing: -0.015em; }
+.letter-text p { margin: 0 0 1em; font: 300 clamp(22px, 2.9vw, 36px)/1.35 var(--serif); letter-spacing: -0.015em; }
 .letter-text .w { opacity: 0.16; transition: opacity 0.5s, filter 0.5s; }
 .letter-text .w.on { opacity: 1; }
+.letter-from { margin: 1.4em 0 0; text-align: right; font: italic 300 clamp(30px, 4.4vw, 54px)/1.1 var(--serif); color: var(--amber); }
 
 /* ---------------------------------------------------------------- Memories deck */
 .memories { position: relative; }
@@ -394,10 +395,9 @@ a { color: inherit; }
 .film-bar span { display: block; height: 100%; background: var(--amber); transform-origin: 0 50%; transform: scaleX(0); }
 
 /* ---------------------------------------------------------------- Notes */
-.notes-grid { max-width: 1100px; margin: 0 auto; columns: 3 300px; column-gap: 22px; }
+.notes-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 22px; align-items: start; }
 .note {
-  break-inside: avoid;
-  margin: 0 0 22px;
+  margin: 0;
   padding: 26px 26px 22px;
   border-radius: 6px;
   background: linear-gradient(160deg, #1f1812, #16110d);
@@ -406,7 +406,7 @@ a { color: inherit; }
   transition: transform 0.6s var(--ease), box-shadow 0.4s;
 }
 .note:hover { transform: rotate(0deg) translateY(-4px); box-shadow: 0 0 0 1px rgba(255, 179, 92, 0.35), 0 30px 60px -30px rgba(0, 0, 0, 0.9); }
-.note p { margin: 0; font: 300 clamp(20px, 2vw, 24px)/1.4 var(--serif); }
+.note p { margin: 0; font: 300 clamp(20px, 2vw, 24px)/1.4 var(--serif); white-space: pre-line; }
 .note p::before { content: "\201C"; display: block; height: 0.5em; font: italic 400 64px/1 var(--serif); color: var(--amber); opacity: 0.8; margin-bottom: 0.2em; }
 .note footer { margin-top: 18px; font: 400 11px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-dim); }
 .note footer::before { content: "— "; color: var(--amber); }
