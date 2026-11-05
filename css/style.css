@@ -195,7 +195,7 @@ a { color: inherit; }
 .hero::after { content: ""; position: absolute; inset: auto 0 0; height: 30vh; background: linear-gradient(transparent, var(--bg)); pointer-events: none; }
 .hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 .hero-inner { position: relative; z-index: 2; text-align: center; transform-style: preserve-3d; will-change: transform; }
-.hero-eyebrow { color: var(--amber); }
+.hero-eyebrow { color: var(--amber); max-width: 34em; margin: 0 auto; line-height: 1.8; text-wrap: balance; }
 .hero-name {
   margin: 0.15em 0 0;
   font: italic 300 clamp(72px, 19vw, 280px)/0.9 var(--serif);

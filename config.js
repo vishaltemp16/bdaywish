@@ -4,6 +4,9 @@ window.BIRTHDAY = {
   // The birthday person's name, as it should appear on the loader, hero, cake topper and finale.
   name: "Vishakha",
 
+  // The small line above the name once the gift is opened.
+  tagline: "a small gift from yours truly, your best friends ♡",
+
   // Shown under the name in the hero. Leave "" to hide.
   date: "",
 

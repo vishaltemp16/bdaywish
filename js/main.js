@@ -16,6 +16,7 @@ document.title = `Happy Birthday, ${NAME}`;
 $$("[data-name-slot]").forEach((el) => (el.hasAttribute("data-split-letters") ? splitLetters(el, NAME) : (el.textContent = NAME)));
 $$("[data-name-text]").forEach((el) => (el.textContent = NAME));
 $$("[data-split]").forEach((el) => splitLetters(el, el.textContent));
+$("[data-tagline]").textContent = CFG.tagline || "";
 $("[data-date]").textContent = CFG.date || "";
 $("[data-from]").textContent = CFG.from || "your friends";
 
