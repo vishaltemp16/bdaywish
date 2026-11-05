@@ -17,15 +17,16 @@ window.BIRTHDAY = {
   candles: 7,
 
   // Photos for the card deck, in order. Put the files in assets/photos/.
-  // `caption` is optional. Portrait photos look best (about 4:5).
+  // `caption` is optional. Any shape works: each card takes the shape of its photo.
   photos: [
-    { src: "assets/photos/placeholder-01.svg", caption: "The one where it all started" },
-    { src: "assets/photos/placeholder-02.svg", caption: "That trip we still talk about" },
-    { src: "assets/photos/placeholder-03.svg", caption: "3 a.m. conversations" },
-    { src: "assets/photos/placeholder-04.svg", caption: "Proof we can be photogenic" },
-    { src: "assets/photos/placeholder-05.svg", caption: "Too much food, zero regrets" },
-    { src: "assets/photos/placeholder-06.svg", caption: "The best kind of chaos" },
-    { src: "assets/photos/placeholder-07.svg", caption: "Here's to many more" },
+    { src: "assets/photos/1.jpeg", caption: "My favourite picture of you <3" },
+    { src: "assets/photos/2.jpeg", caption: "The day we pretend to look aesthetic in Crossword" },
+    { src: "assets/photos/3.jpeg", caption: "Garba year changed but remained constant" },
+    { src: "assets/photos/4.jpeg", caption: "My fav picture of you pt.2" },
+    { src: "assets/photos/5.jpeg", caption: "Sab apni duniya me hi haii" },
+    { src: "assets/photos/6.jpeg", caption: "Our faces after having good food ✨" },
+    { src: "assets/photos/7.jpeg", caption: "Dono ek dusre ko leke dubte hue" },
+    { src: "assets/photos/8.jpeg", caption: "Hehehehe" },
   ],
 
   // The video that plays in the "For you" section.
@@ -60,6 +61,10 @@ window.BIRTHDAY = {
     {
       from: "Sneha Paul",
       text: "Happiest Birthday Vishuuuuuuuu<3\nMay u get all the happiness and love in the world!!\nMay u get to eat Momos and Rasmalais more often..\nLove u to the moon and back.",
+    },
+    {
+      from: "Eshika",
+      text: "Many happy returns, May your day be full of main character energy, zero faltu drama, and endless sukoon. Keep slaying, keep serving looks, and never let anyone dim your glow......",
     },
   ],
 };

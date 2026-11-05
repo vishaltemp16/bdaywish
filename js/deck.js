@@ -27,8 +27,36 @@ export function createDeck(section, photos) {
     img.src = photo.src;
     img.alt = photo.caption || `Photo ${index + 1}`;
     deck.append(el);
-    return { el, img, shade: el.querySelector(".card-shade"), tilt: (rnd() - 0.5) * 8, shift: (rnd() - 0.5) * 14, side: index % 2 ? 1 : -1 };
+    return { el, img, w: 0, h: 0, shade: el.querySelector(".card-shade"), tilt: (rnd() - 0.5) * 8, shift: (rnd() - 0.5) * 14, side: index % 2 ? 1 : -1 };
   });
+
+  // Every card takes the shape of its photo, so nothing is cropped: the photo is
+  // fitted inside the stage, then the white border and the foot go around it.
+  const PAD = 10;
+  const FOOT = 46;
+  function fit() {
+    const boxW = Math.min(deck.clientWidth * 0.94, 620);
+    // Leave room under the top card for the edges of the pile beneath it.
+    const boxH = Math.max(200, deck.clientHeight - 40);
+    cards.forEach((card) => {
+      const { naturalWidth: nw, naturalHeight: nh } = card.img;
+      const ratio = nw && nh ? nw / nh : 4 / 5;
+      let pw = boxW - PAD * 2;
+      let ph = pw / ratio;
+      if (ph > boxH - PAD - FOOT) {
+        ph = boxH - PAD - FOOT;
+        pw = ph * ratio;
+      }
+      card.w = Math.round(pw + PAD * 2);
+      card.h = Math.round(ph + PAD + FOOT);
+      Object.assign(card.el.style, { width: `${card.w}px`, height: `${card.h}px`, marginLeft: `${-card.w / 2}px`, marginTop: `${-card.h / 2}px` });
+    });
+  }
+  fit();
+  cards.forEach((card) => card.img.complete || card.img.addEventListener("load", fit, { once: true }));
+  new ResizeObserver(fit).observe(deck);
+  // How far a card has to travel before it counts as thrown, and how fast the next one rises.
+  const reach = () => Math.min(deck.clientWidth, 400);
 
   // The ambient backdrop: the current photo drawn into a tiny canvas and stretched
   // over the screen, which blurs it for free. Two canvases crossfade.
@@ -94,7 +122,7 @@ export function createDeck(section, photos) {
   // ---------------------------------------------------------------- Phones: grab and flick
   function swipeDeck() {
     section.classList.add("is-swipe");
-    deck.setAttribute("data-lenis-prevent", "");
+    cards.forEach((card) => card.el.setAttribute("data-lenis-prevent", ""));
     hint.textContent = "drag a card · flick it away";
     const order = cards.map((_, i) => i);
     cards.forEach((card, i) => Object.assign(card, { x: 0, y: 0, vx: 0, vy: 0, rot: 0, spin: 0, grab: 1, depth: i, fade: 1, mode: "stack", flownAt: 0 }));
@@ -141,11 +169,10 @@ export function createDeck(section, photos) {
       drag.samples.push([performance.now(), event.clientX, event.clientY]);
       const [vx, vy] = velocityOf(drag.samples);
       drag = null;
-      const width = deck.offsetWidth;
       const distance = Math.hypot(card.x, card.y);
       const speed = Math.hypot(vx, vy);
       const outward = vx * card.x + vy * card.y >= 0;
-      if (event.type !== "pointercancel" && (distance > width * 0.38 || (speed > 520 && outward) || speed > 1100)) {
+      if (event.type !== "pointercancel" && (distance > reach() * 0.3 || (speed > 520 && outward) || speed > 1100)) {
         // Off it goes, in the direction of the flick (or of the drag, if barely moving).
         const [dx, dy] = speed > 300 ? [vx / speed, vy / speed] : [card.x / (distance || 1), card.y / (distance || 1)];
         const launch = clamp(Math.max(speed, 1500), 1500, 4200);
@@ -184,11 +211,9 @@ export function createDeck(section, photos) {
       const dt = last ? Math.min((now - last) / 1000, 1 / 30) : 1 / 60;
       last = now;
       if (!onScreen() && !cards.some((card) => card.mode === "fly")) return;
-      const width = deck.offsetWidth;
-      const height = deck.offsetHeight;
       const top = cards[order[0]];
       // While the top card is pulled away, the one beneath starts to rise.
-      const pull = top.mode === "drag" || top.mode === "spring" ? clamp(Math.hypot(top.x, top.y) / (width * 0.7), 0, 1) : 0;
+      const pull = top.mode === "drag" || top.mode === "spring" ? clamp(Math.hypot(top.x, top.y) / (reach() * 0.55), 0, 1) : 0;
 
       order.forEach((index, rank) => {
         const card = cards[index];
@@ -222,7 +247,7 @@ export function createDeck(section, photos) {
           card.x += card.vx * dt;
           card.y += card.vy * dt;
           card.rot += card.spin * dt;
-          const gone = Math.abs(card.x) > innerWidth / 2 + width || Math.abs(card.y) > innerHeight / 2 + height || now - card.flownAt > 1600;
+          const gone = Math.abs(card.x) > (innerWidth + card.w) / 2 + 40 || Math.abs(card.y) > (innerHeight + card.h) / 2 + 40 || now - card.flownAt > 1600;
           if (!gone) {
             place(card, { x: card.x, y: card.y, z: 60, rx: clamp(-card.vy * 0.005, -22, 22), ry: clamp(card.vx * 0.005, -22, 22), rz: card.rot, scale: 1.04, layer: 1000 });
             return;
@@ -241,7 +266,7 @@ export function createDeck(section, photos) {
           z: -d * 60,
           rz: card.tilt * settled,
           opacity: clamp(5.2 - d, 0, 1) * card.fade,
-          shade: clamp(d * 0.17, 0, 0.62),
+          shade: clamp(d * 0.26, 0, 0.7),
           layer: 500 - rank,
         });
       });
@@ -262,7 +287,7 @@ export function createDeck(section, photos) {
 
     section.addEventListener("pointermove", (event) => {
       if (!fine.matches) return;
-      const box = deck.getBoundingClientRect();
+      const box = cards[clamp(Math.round(p), 0, count - 1)].el.getBoundingClientRect();
       pointer.tx = clamp(((event.clientX - box.left) / box.width - 0.5) * 2, -1.4, 1.4);
       pointer.ty = clamp(((event.clientY - box.top) / box.height - 0.5) * 2, -1.4, 1.4);
       pointer.mx = ((event.clientX - box.left) / box.width) * 100;
@@ -288,18 +313,16 @@ export function createDeck(section, photos) {
       pointer.x = follow(pointer.x, pointer.tx, dt, 0.25);
       pointer.y = follow(pointer.y, pointer.ty, dt, 0.25);
 
-      const width = deck.offsetWidth;
-      const height = deck.offsetHeight;
-      const away = innerWidth / 2 + width * 0.9;
       cards.forEach((card, i) => {
         const t = p - i;
+        const away = (innerWidth + card.w) / 2 + 60;
         if (t > 0) {
           const e = clamp(t, 0, 1);
           const k = easeInOut(e);
           const arc = Math.sin(e * Math.PI);
           place(card, {
             x: card.side * k * away,
-            y: -arc * height * 0.16 - k * height * 0.06,
+            y: -arc * card.h * 0.16 - k * card.h * 0.06,
             z: arc * 240,
             rx: k * 10,
             ry: card.side * k * 58,
@@ -319,7 +342,7 @@ export function createDeck(section, photos) {
             ry: top ? pointer.x * 12 : 0,
             rz: card.tilt * settled,
             opacity: clamp(5.2 - d, 0, 1),
-            shade: clamp(d * 0.17, 0, 0.62),
+            shade: clamp(d * 0.26, 0, 0.7),
             layer: 500 - i,
           });
         }
