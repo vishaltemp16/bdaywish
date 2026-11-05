@@ -1,0 +1,12 @@
+{
+  "name": "bdaywish",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A one-page birthday gift: loader, 3D photo deck, isometric cake, video and notes.",
+  "type": "module",
+  "scripts": {
+    "build": "node tools/build-cake.mjs",
+    "placeholders": "node tools/placeholders.mjs",
+    "dev": "node tools/serve.mjs"
+  }
+}
