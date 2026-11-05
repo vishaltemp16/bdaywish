@@ -2,3 +2,13 @@ node_modules/
 .DS_Store
 Thumbs.db
 .claude/
+
+# Raw media dropped into the project root (compressed copies go in assets/)
+/*.mp4
+/*.mov
+/*.m4v
+/*.webm
+/*.jpg
+/*.jpeg
+/*.png
+/*.heic
